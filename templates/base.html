@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Portfolio{% endblock %}</title>
+    <link rel="preload" as="image" href="{{ url_for('static', filename='usek-logo.jpg') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
 </head>
 <body>
     <header>
+        <img src="{{ url_for('static', filename='usek-logo.jpg') }}" alt="Logo" class="site-logo">
         {% block header %}{% endblock %}
     </header>
 

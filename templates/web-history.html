@@ -5,12 +5,13 @@
 <h1>History of the Web</h1>
 <p>The World Wide Web (WWW) is a system of websites and web pages that are accessed through the Internet using web browsers. Created by Tim Berners-Lee around 1990, the Web made it much easier for people to access, connect, and share information online.</p>
 <nav>
-    <a href="/">Home</a> <br>
+    <a href="/">Home</a>
     <a href="/internet-history">Internet History</a>
 </nav>
 {% endblock %}
 
 {% block content %}
+<img src="{{ url_for('static', filename='web-history-hypertext.svg') }}" alt="Hypertext Web Map" class="topic-banner">
 <section>
     <h2>Web Timeline</h2>
     <article>
