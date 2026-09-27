@@ -20,13 +20,10 @@
   --accent-cyan: #22d3ee;     /* Bright Cyan */
   --accent-cyan-light: rgba(34, 211, 238, 0.12);
   --accent-rose: #fb7185;     /* Soft Rose */
-  --accent-emerald: #34d399;  /* Fresh Emerald */
 
   /* Gradient Tokens */
-  --gradient-brand: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%);
-  --gradient-accent: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%);
-  --gradient-glow: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(34, 211, 238, 0.08) 100%);
-  --gradient-card-top: linear-gradient(90deg, #6366f1, #22d3ee, #fb7185);
+  --gradient-brand: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+  --gradient-card-top: linear-gradient(90deg, var(--primary), var(--accent-cyan), var(--accent-rose));
 
   /* Dark Neutrals & Surfaces */
   --bg: #0b0f1a;
@@ -59,8 +56,9 @@
   /* Layout */
   --max-width: 920px;
   --nav-item-min: 8rem;
-  --nav-item-max: 16rem;
   --gallery-item-min: 15rem;
+  --timeline-line-length: clamp(5rem, 18vw, 15rem);
+  --artwork-opacity: 0.34;
 
   /* Corners & Elevation */
   --radius-sm: 6px;
@@ -72,11 +70,29 @@
 
   /* Transitions */
   --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-duration: 650ms;
+  --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --------------------------------------------------------------------------
-   2. Keyframe Animations
-   -------------------------------------------------------------------------- */
+/* Short entrances and interaction feedback; no continuous background motion. */
+@keyframes reveal-content {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes accent-sweep {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}
+
+@keyframes milestone-pulse {
+  50% { transform: scale(1.65); }
+}
+
+@keyframes confirm-pop {
+  from { transform: scale(0.65) rotate(-12deg); }
+  to { transform: scale(1); }
+}
 
 /* --------------------------------------------------------------------------
    3. Reset & Dark Ambient Background
@@ -124,9 +140,9 @@ footer {
 /* --------------------------------------------------------------------------
    4. Page Shell & Layout Containers
    -------------------------------------------------------------------------- */
-header,
+body > header,
 main,
-footer,
+body > footer,
 .container {
   width: 100%;
   max-width: var(--max-width);
@@ -146,18 +162,19 @@ main {
 /* --------------------------------------------------------------------------
    5. Header, Logo & Navigation
    -------------------------------------------------------------------------- */
-header {
+body > header {
   padding-top: var(--space-md);
   padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
   position: relative;
 }
 
 /* Top decorative cyber stripe */
-header::before {
+body > header::before {
   content: "";
   position: absolute;
   top: 0;
@@ -165,15 +182,14 @@ header::before {
   right: 0;
   height: 3px;
   background: var(--gradient-card-top);
-}
-
-/* Hide header if completely empty */
-header:empty {
-  display: none;
+  background-size: 200% 100%;
+  animation: accent-sweep 1.8s ease-out;
 }
 
 /* University Logo: Clean circular badge with cyan glow */
 .site-logo {
+  grid-column: 1;
+  grid-row: 1;
   height: 44px;
   width: 44px;
   object-fit: contain;
@@ -188,14 +204,15 @@ header:empty {
 }
 
 .site-logo:hover {
-  transform: scale(1.1);
+  transform: scale(1.12) rotate(-6deg);
   border-color: var(--accent-cyan);
   box-shadow: 0 0 16px rgba(34, 211, 238, 0.4);
   filter: brightness(1.2) saturate(1.2);
 }
 
-/* Tech-Savvy H1 Heading */
-header h1 {
+/* Shared page-title typography. */
+header h1,
+main:has(> form) > h2 {
   font-family: var(--font-heading);
   font-size: clamp(1.75rem, 7vw, 2.2rem);
   font-weight: 800;
@@ -203,15 +220,51 @@ header h1 {
   letter-spacing: -0.04em;
   background: var(--gradient-brand);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
 
-header p {
+body > header > p {
   color: var(--text-muted);
   font-size: var(--font-size-base);
   max-width: 680px;
   margin-top: var(--space-xs);
+}
+
+body > header > a[href="/"] {
+  grid-column: 3;
+  grid-row: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--surface-glass);
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+body > header > a[href="/"]:hover,
+body > header > a[href="/"]:focus-visible {
+  border-color: var(--accent-cyan);
+  color: var(--text-bright);
+  background: var(--primary-light);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+}
+
+body > header > :is(h1, p, nav) {
+  grid-column: 1 / -1;
+  grid-row: auto;
 }
 
 /* Flexbox Navigation Bar */
@@ -219,11 +272,11 @@ nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-evenly;
-  gap: var(--space-md);
+  justify-content: flex-start;
+  gap: var(--space-sm);
   width: 100%;
-  margin-top: var(--space-xs);
-  padding: var(--space-sm) 0;
+  margin-top: 0;
+  padding: 0;
 }
 
 /* Strip legacy line-breaks in nav */
@@ -231,18 +284,17 @@ nav br {
   display: none;
 }
 
-/* ---- Nav Buttons with Holographic Laser Sheen & Orbiting Binary ---- */
+/* Navigation buttons with a subtle highlight on hover. */
 nav a {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 1 1 var(--nav-item-min);
+  flex: 0 1 auto;
   min-width: min(100%, var(--nav-item-min));
-  max-width: var(--nav-item-max);
   min-height: 44px;
   padding: var(--space-sm) var(--space-md);
-  background: rgba(17, 24, 39, 0.85);
+  background: var(--surface);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: var(--text-main);
@@ -254,7 +306,7 @@ nav a {
   text-decoration: none;
   text-align: center;
   white-space: normal;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-sm);
   transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
   overflow: visible;
   z-index: 1;
@@ -283,14 +335,16 @@ nav a::before {
 }
 
 /* Hover: Laser sheen sweep + cyan glowing border */
-nav a:hover {
-  color: #ffffff;
+nav a:hover,
+nav a:focus-visible {
+  color: var(--text-bright);
   border-color: var(--accent-cyan);
   box-shadow: 0 0 18px rgba(34, 211, 238, 0.35), 0 4px 16px rgba(0, 0, 0, 0.45);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
 }
 
-nav a:hover::before {
+nav a:hover::before,
+nav a:focus-visible::before {
   background-position: 200% 0;
   opacity: 1;
 }
@@ -384,25 +438,30 @@ a:hover {
   object-fit: cover;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.12;
+  opacity: var(--artwork-opacity);
   mix-blend-mode: screen;
-  filter: saturate(1.4);
-  transition: opacity 0.6s ease;
+  filter: contrast(1.15) saturate(1.2);
 }
 
-.hero-banner {
-  opacity: 0.15;
+/* Animate foreground elements so fixed background images stay fixed. */
+body > header,
+main > h2,
+main > p,
+main > form,
+main > section > :is(h1, h2, p),
+main > section > ul > li {
+  animation: reveal-content var(--motion-duration) var(--motion-ease) backwards;
 }
 
-.topic-banner {
-  opacity: 0.1;
-}
+main > section > ul > li:nth-child(2) { animation-delay: 80ms; }
+main > section > ul > li:nth-child(3) { animation-delay: 160ms; }
+main > section > ul > li:nth-child(4) { animation-delay: 240ms; }
+main > section > ul > li:nth-child(n + 5) { animation-delay: 320ms; }
 
 /* --------------------------------------------------------------------------
    8. Weekly Work Gallery (CSS Grid)
    -------------------------------------------------------------------------- */
-.weekly-list,
-section > ul {
+main > section > ul {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-md);
@@ -410,11 +469,10 @@ section > ul {
   margin-top: var(--space-md);
 }
 
-.weekly-list li,
-section > ul li {
+main > section > ul li {
   background: var(--surface-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -425,8 +483,7 @@ section > ul li {
 }
 
 /* Gradient accent bar at the top of each weekly card */
-.weekly-list li::before,
-section > ul li::before {
+main > section > ul li::before {
   content: "";
   position: absolute;
   top: 0;
@@ -438,22 +495,21 @@ section > ul li::before {
   transition: var(--transition);
 }
 
-.weekly-list li:hover,
-section > ul li:hover {
+main > section > ul li:hover,
+main > section > ul li:focus-within {
   border-color: var(--border-focus);
   box-shadow: var(--shadow-hover);
-  transform: translateY(-4px);
+  transform: translateY(-7px) scale(1.015);
 }
 
-.weekly-list li:hover::before,
-section > ul li:hover::before {
+main > section > ul li:hover::before,
+main > section > ul li:focus-within::before {
   height: 4px;
   background: var(--gradient-card-top);
   opacity: 1;
 }
 
-.weekly-list li a,
-section > ul li a {
+main > section > ul li a {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -466,8 +522,7 @@ section > ul li a {
 }
 
 /* Arrow indicator on card links */
-.weekly-list li a::after,
-section > ul li a::after {
+main > section > ul li a::after {
   content: "→";
   font-size: 1.1rem;
   color: var(--primary);
@@ -475,9 +530,9 @@ section > ul li a::after {
   transition: var(--transition);
 }
 
-.weekly-list li:hover a::after,
-section > ul li a::after {
-  transform: translateX(4px);
+main > section > ul li:hover a::after,
+main > section > ul li:focus-within a::after {
+  transform: translateX(8px);
   color: var(--accent-cyan);
 }
 
@@ -512,37 +567,6 @@ article header {
   display: block;
 }
 
-article header::before {
-  display: none;
-}
-
-/* Milestone Date Pill Badge */
-article time {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(99, 102, 241, 0.15);
-  color: var(--accent-cyan);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.82rem;
-  padding: 0.2rem 0.65rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  margin-right: var(--space-xs);
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.1);
-}
-
-/* Quotes */
-article blockquote {
-  margin: var(--space-md) 0;
-  padding: var(--space-sm) var(--space-md);
-  background: rgba(99, 102, 241, 0.06);
-  border-left: 3px solid var(--accent-cyan);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  font-style: italic;
-  color: var(--text-muted);
-}
-
 /* Source link styled as a chip */
 article a {
   display: inline-flex;
@@ -568,6 +592,220 @@ article a:hover {
   transform: translateX(2px);
 }
 
+/* Profile skills are compact chips, separate from the homepage card grid. */
+.profile .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: var(--space-sm) 0;
+  list-style: none;
+}
+
+.profile .chip {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  color: var(--accent-cyan);
+  background: var(--accent-cyan-light);
+  font-size: 0.9rem;
+}
+
+/* Week 2: a horizontal timeline with each milestone beside its connector. */
+main:has(section > article) {
+  padding-top: var(--space-md);
+}
+
+main section:has(> article) {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: auto;
+  scrollbar-color: var(--primary-hover) var(--bg-secondary);
+  margin-top: 0;
+  padding-top: var(--space-2xl);
+  padding-bottom: var(--space-lg);
+}
+
+main section + section:has(> article) {
+  margin-top: var(--space-md);
+}
+
+main section:has(> article) > h2 {
+  position: absolute;
+  top: 0;
+  left: var(--space-md);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Standard colors cover Firefox; Chromium/Safari also support a gradient thumb. */
+@supports selector(::-webkit-scrollbar) {
+  main section:has(> article) {
+    scrollbar-color: auto;
+  }
+
+  main section:has(> article)::-webkit-scrollbar {
+    height: var(--space-md);
+  }
+
+  main section:has(> article)::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+  }
+
+  main section:has(> article)::-webkit-scrollbar-thumb {
+    min-width: var(--space-2xl);
+    border: 3px solid var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    background: var(--gradient-brand);
+    background-clip: padding-box;
+  }
+
+  main section:has(> article)::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-hover), var(--accent-cyan));
+    background-clip: padding-box;
+  }
+
+  main section:has(> article)::-webkit-scrollbar-thumb:active {
+    background: var(--accent-cyan);
+    background-clip: padding-box;
+  }
+
+  main section:has(> article)::-webkit-scrollbar-button {
+    display: none;
+  }
+}
+
+main section:has(> article) > article {
+  --milestone-accent: var(--accent-cyan);
+  min-width: 0;
+  position: relative;
+  flex: 0 0 clamp(20rem, 48vw, 38rem);
+  margin: 0;
+  padding: 0 var(--space-md) var(--space-xl) calc(var(--timeline-line-length) + var(--space-lg));
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+main section:has(> article) > article:nth-of-type(3n + 2) {
+  --milestone-accent: var(--primary-hover);
+}
+
+main section:has(> article) > article:nth-of-type(3n + 3) {
+  --milestone-accent: var(--accent-rose);
+}
+
+main section:has(> article) > article::before {
+  content: "";
+  position: absolute;
+  top: 0.9rem;
+  left: 0;
+  width: var(--timeline-line-length);
+  height: 2px;
+  background: linear-gradient(90deg, var(--border-color), var(--milestone-accent));
+}
+
+main section:has(> article) > article::after {
+  content: "";
+  position: absolute;
+  top: calc(0.9rem - 5px);
+  left: calc(var(--timeline-line-length) - 5px);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  background: var(--milestone-accent);
+  box-shadow: 0 0 0 5px var(--accent-cyan-light), 0 0 20px var(--milestone-accent);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+main section:has(> article) > article:hover,
+main section:has(> article) > article:focus-within {
+  box-shadow: none;
+  transform: none;
+}
+
+main section:has(> article) > article:hover::after,
+main section:has(> article) > article:focus-within::after {
+  transform: scale(1.25);
+  animation: milestone-pulse 800ms ease-in-out 2;
+  box-shadow: 0 0 0 7px var(--accent-cyan-light), 0 0 25px var(--milestone-accent);
+}
+
+main section:has(> article) article header {
+  margin: 0 0 var(--space-sm);
+}
+
+main section:has(> article) article h3 {
+  font-size: 1.2rem;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  margin-bottom: var(--space-md);
+}
+
+main section:has(> article) article time {
+  display: inline-flex;
+  align-items: center;
+  margin-right: var(--space-xs);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--milestone-accent);
+}
+
+main section:has(> article) article p {
+  color: var(--text-main);
+}
+
+/* Keep timeline copy distinct from the brighter diagram labels behind it. */
+main section:has(> article) article,
+main:has(> .topic-banner) > section > p {
+  text-shadow: 0 1px 2px var(--bg), 0 0 6px var(--bg);
+}
+
+main section:has(> article) article blockquote {
+  margin: var(--space-md) 0;
+  padding: 0 0 0 var(--space-md);
+  border-left: 3px solid var(--milestone-accent);
+  font-style: italic;
+  color: var(--text-main);
+}
+
+main section:has(> article) article blockquote p {
+  color: inherit;
+}
+
+main section:has(> article) article a {
+  margin-top: var(--space-sm);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-decoration: underline;
+  text-decoration-color: rgba(129, 140, 248, 0.45);
+  text-underline-offset: 0.22em;
+}
+
+main section:has(> article) article a:hover,
+main section:has(> article) article a:focus-visible {
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+  text-decoration-color: currentColor;
+}
+
 /* --------------------------------------------------------------------------
    10. Footer
    -------------------------------------------------------------------------- */
@@ -591,36 +829,15 @@ footer p + p {
    11. Responsive Media Queries (Mobile-First)
    -------------------------------------------------------------------------- */
 @media (min-width: 640px) {
-  header {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    column-gap: var(--space-md);
-    row-gap: var(--space-xs);
+  body > header {
     padding-top: var(--space-lg);
     padding-bottom: var(--space-lg);
   }
 
-  .site-logo {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  header h1 {
+  body > header > h1 {
     grid-column: 2;
     grid-row: 1;
     margin-bottom: 0;
-  }
-
-  header nav {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    margin-top: 0;
-  }
-
-  header p {
-    grid-column: 1 / -1;
-    grid-row: 2;
   }
 
   main {
@@ -636,13 +853,11 @@ footer p + p {
     font-size: 1.55rem;
   }
 
-  .weekly-list,
-  section > ul {
+  main > section > ul {
     grid-template-columns: repeat(auto-fit, minmax(var(--gallery-item-min), 1fr));
   }
 
-  .weekly-list li a,
-  section > ul li a,
+  main > section > ul li a,
   article {
     padding: var(--space-lg);
   }
@@ -655,5 +870,505 @@ footer p + p {
 
   h2 {
     font-size: 1.75rem;
+  }
+}
+
+/* Week 1 is the launch milestone represented by the template's empty-list text. */
+main > section:has(> .portfolio-title) > ul:has(> li > a)::before {
+  content: "Week 1 — live site launched.";
+  display: flex;
+  align-items: center;
+  min-height: 76px;
+  padding: var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  background-color: var(--surface-card);
+  background-image: var(--gradient-brand);
+  background-size: 100% 3px;
+  background-repeat: no-repeat;
+  box-shadow: var(--shadow-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  main > section:has(> .portfolio-title) > ul:has(> li > a)::before {
+    padding: var(--space-lg);
+  }
+}
+
+/* Profile form uses the same heading, surfaces, and accent tokens as the site. */
+main:has(> form) > h2 {
+  margin-bottom: var(--space-md);
+  padding: 0;
+}
+
+main:has(> form) > h2::before {
+  display: none;
+}
+
+main:has(> form) > p {
+  max-width: 700px;
+  margin-bottom: var(--space-xl);
+  color: var(--text-muted);
+}
+
+main > form {
+  position: relative;
+  padding: clamp(var(--space-md), 4vw, var(--space-xl));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+main > form::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--gradient-card-top);
+}
+
+main > form fieldset {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-md);
+  min-width: 0;
+  margin: 0 0 var(--space-lg);
+  padding: clamp(var(--space-md), 3vw, var(--space-xl));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: linear-gradient(145deg, var(--primary-light), transparent 55%), var(--surface-card);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main > form fieldset:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-cyan-light);
+}
+
+main > form legend {
+  max-width: 100%;
+  padding: 0 0 var(--space-sm);
+  margin-bottom: var(--space-sm);
+  border: 0;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-heading);
+  font-size: clamp(1.15rem, 2.3vw, 1.4rem);
+  font-weight: 800;
+  line-height: var(--line-height-heading);
+  letter-spacing: -0.035em;
+}
+
+main > form fieldset > label {
+  grid-column: 1 / -1;
+  align-self: end;
+  margin-top: var(--space-sm);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Accent rails visually connect field labels to the active input. */
+main > form fieldset > label:not(:has(+ input:is([type="radio"], [type="checkbox"]))) {
+  padding: var(--space-sm) var(--space-md);
+  border-inline-start: 3px solid var(--primary-hover);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: linear-gradient(90deg, var(--primary-light), transparent);
+  font-family: var(--font-heading);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main > form fieldset > label:not(:has(+ input:is([type="radio"], [type="checkbox"]))):is(:hover, :has(+ :focus)) {
+  border-inline-start-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  background: linear-gradient(90deg, var(--accent-cyan-light), transparent);
+  box-shadow: -3px 0 12px -5px var(--accent-cyan);
+}
+
+main > form fieldset > p {
+  grid-column: 1 / -1;
+  margin: var(--space-md) 0 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+main > form fieldset > :is(input:not([type="radio"], [type="checkbox"]), select, textarea) {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  min-height: 54px;
+  padding: var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  outline: 0;
+  color: var(--text-bright);
+  background: linear-gradient(180deg, var(--bg-secondary), var(--bg));
+  box-shadow: inset 0 1px 2px var(--bg), 0 1px 0 var(--border-color);
+  font: inherit;
+  line-height: 1.4;
+  color-scheme: dark;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main > form fieldset > :is(input, select, textarea):hover {
+  border-color: var(--border-focus);
+}
+
+main > form fieldset > :is(input, select, textarea):focus-visible {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 4px var(--accent-cyan-light), var(--shadow-sm);
+}
+
+main > form fieldset > label:has(+ :is(input, select, textarea):focus-visible) {
+  color: var(--accent-cyan);
+}
+
+/* Errors appear after interaction rather than on the untouched form. */
+main > form fieldset > :is(input, select, textarea):user-invalid {
+  border-color: var(--accent-rose);
+}
+
+main > form fieldset > :is(input, select, textarea):user-invalid:focus-visible {
+  outline: 2px solid var(--accent-rose);
+  outline-offset: 3px;
+}
+
+main > form fieldset > :is(input, textarea)::placeholder {
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+main > form fieldset > textarea {
+  min-height: 180px;
+  line-height: var(--line-height-base);
+  resize: vertical;
+}
+
+main > form fieldset > select:not([multiple]) {
+  appearance: none;
+  padding-right: var(--space-2xl);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--accent-cyan) 50%),
+    linear-gradient(135deg, var(--accent-cyan) 50%, transparent 50%),
+    linear-gradient(180deg, var(--bg-secondary), var(--bg));
+  background-position: calc(100% - 23px) 50%, calc(100% - 17px) 50%, 0 0;
+  background-size: 6px 6px, 6px 6px, 100% 100%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+main > form fieldset > select:required:invalid {
+  color: var(--text-muted);
+}
+
+main > form select :is(option, optgroup) {
+  color: var(--text-main);
+  background: var(--bg-secondary);
+}
+
+main > form fieldset > select[multiple] {
+  min-height: 228px;
+  padding: var(--space-sm);
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-hover) var(--bg-secondary);
+}
+
+main > form fieldset > select[multiple] option {
+  margin-bottom: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+}
+
+main > form fieldset > select[multiple] option:checked {
+  color: var(--text-bright);
+  background: linear-gradient(var(--primary-light), var(--primary-light)), var(--bg-secondary);
+  box-shadow: inset 3px 0 var(--accent-cyan);
+}
+
+main > form fieldset > select[multiple] + p {
+  margin-top: 0;
+  font-size: 0.8rem;
+}
+
+main > form fieldset > input:is([type="date"], [type="time"], [type="number"]) {
+  font-variant-numeric: tabular-nums;
+}
+
+main > form input::-webkit-calendar-picker-indicator {
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-cyan-light);
+  cursor: pointer;
+}
+
+main > form fieldset > input[type="color"] {
+  width: 100%;
+  max-width: 160px;
+  padding: var(--space-sm);
+  cursor: pointer;
+}
+
+main > form input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+main > form input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-sm);
+}
+
+main > form input[type="color"]::-moz-color-swatch {
+  border: 1px solid var(--border-focus);
+  border-radius: var(--radius-sm);
+}
+
+/* Choice cards keep their native inputs for keyboard and form behavior. */
+main > form fieldset > label:has(+ input:is([type="radio"], [type="checkbox"])) {
+  grid-column: 1 / -1;
+  align-self: stretch;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  line-height: 1.45;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main > form fieldset > label:has(+ input:is([type="radio"], [type="checkbox"]))::before {
+  content: "";
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-muted);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+main > form fieldset > label:has(+ input[type="radio"])::before {
+  border-radius: 50%;
+}
+
+main > form fieldset > label:has(+ input:is([type="radio"], [type="checkbox"])):hover {
+  border-color: var(--border-focus);
+  background: var(--primary-light);
+}
+
+main > form fieldset > label:has(+ input:checked) {
+  border-color: var(--accent-cyan);
+  color: var(--text-bright);
+  background: var(--accent-cyan-light);
+  box-shadow: inset 0 0 0 1px var(--border-focus);
+}
+
+main > form fieldset > label:has(+ input:checked)::before {
+  border-color: var(--accent-cyan);
+  background: var(--accent-cyan);
+  box-shadow: inset 0 0 0 4px var(--bg-secondary);
+}
+
+main > form fieldset > label:has(+ input[type="checkbox"]:checked)::before {
+  /* Draw the check without adding text to the accessible label. */
+  background:
+    linear-gradient(45deg, transparent 43%, var(--bg) 43% 62%, transparent 62%) 3px 7px / 6px 6px,
+    linear-gradient(-45deg, transparent 40%, var(--bg) 40% 58%, transparent 58%) 7px 3px / 9px 10px,
+    var(--accent-cyan);
+  background-repeat: no-repeat;
+  box-shadow: none;
+}
+
+main > form fieldset > label:has(+ input:focus-visible) {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+main > form fieldset > label:has(+ input:user-invalid) {
+  border-color: var(--accent-rose);
+}
+
+main > form > label[for="confirmation"] {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: 60px;
+  margin: 0 0 var(--space-lg);
+  padding: var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  background: var(--surface-card);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main > form > label[for="confirmation"]::before {
+  content: "";
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-focus);
+  border-radius: var(--radius-sm);
+  color: var(--bg);
+  background: var(--bg-secondary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+main > form > label[for="confirmation"]:has(+ input:checked) {
+  border-color: var(--border-focus);
+  background: var(--accent-cyan-light);
+  box-shadow: 0 0 0 2px var(--accent-cyan-light);
+}
+
+main > form > label[for="confirmation"]:has(+ input:checked)::before {
+  content: "✓";
+  border-color: var(--accent-cyan);
+  background: var(--accent-cyan);
+  animation: confirm-pop 250ms var(--motion-ease);
+}
+
+main > form > label[for="confirmation"]:has(+ input:focus-visible) {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+main > form fieldset > input:is([type="radio"], [type="checkbox"]),
+main > form > input[type="checkbox"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+main > form > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  margin: 0 var(--space-sm) var(--space-sm) 0;
+  padding: var(--space-md) var(--space-xl);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font: 700 0.95rem var(--font-body);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+main > form > button[type="submit"] {
+  border-color: var(--accent-cyan);
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--primary-hover), var(--accent-cyan));
+  box-shadow: var(--shadow-sm);
+}
+
+main > form > button[type="reset"] {
+  color: var(--text-main);
+  background: var(--surface-card);
+}
+
+main > form > button:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+main > form > button:active,
+body > header > a[href="/"]:active,
+nav a:active {
+  transform: translateY(0) scale(0.98);
+}
+
+main > form > button:focus-visible,
+body > header > a[href="/"]:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+@media (min-width: 700px) {
+  main > form fieldset {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+  }
+
+  main > form fieldset > label:not(:has(+ input:is([type="radio"], [type="checkbox"]))) {
+    grid-column: 1 / 5;
+    align-self: center;
+    margin-top: 0;
+  }
+
+  main > form fieldset > :is(input:not([type="radio"], [type="checkbox"]), select, textarea) {
+    grid-column: 5 / -1;
+  }
+
+  main > form fieldset > label:has(+ input[type="checkbox"]) {
+    grid-column: span 6;
+  }
+
+  main > form fieldset > label:has(+ input[type="radio"]) {
+    grid-column: span 4;
+  }
+
+  main > form fieldset > label:has(+ input[name="internship_completed"]) {
+    grid-column: span 6;
+  }
+
+  main > form fieldset > select[multiple] + p {
+    grid-column: 5 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  main > form > button {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Select a still view even when image documents do not inherit this preference. */
+  .hero-banner {
+    content: url("cyber-engineer-banner.svg#still");
+  }
+
+  .topic-banner[src$="internet-history-network.svg"] {
+    content: url("internet-history-network.svg#still");
+  }
+
+  .topic-banner[src$="web-history-hypertext.svg"] {
+    content: url("web-history-hypertext.svg#still");
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
   }
 }

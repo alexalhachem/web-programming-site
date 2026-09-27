@@ -3,12 +3,13 @@
 {% block header %}
 <h1>History of the World Wide Web</h1>
 <nav aria-label="Main navigation">
-  <a href="/">Home</a> <br>
+  <br>
   <a href="internet-history-ai">Internet History AI</a>
 </nav>
 {% endblock %}
 
 {% block content %}
+<img src="{{ url_for('static', filename='web-history-hypertext.svg') }}" alt="" aria-hidden="true" class="topic-banner">
 <section aria-labelledby="web-overview">
   <h2 id="web-overview">Overview</h2>
   <p>The World Wide Web (WWW) is a system of websites and web pages that are accessed through the Internet using web browsers. Created by Tim Berners-Lee around 1990, the Web made it much easier for people to access, connect, and share information online.</p>

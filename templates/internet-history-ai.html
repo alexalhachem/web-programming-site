@@ -6,7 +6,6 @@
 {% block header %}
 <h1>History of the Internet</h1>
 <nav aria-label="Main navigation">
-  <a href="/">Home</a>
   <a href="/web-history-ai">Web History AI</a>
 </nav>
 {% endblock %}
@@ -14,6 +13,7 @@
 
 
 {% block content %}
+<img src="{{ url_for('static', filename='internet-history-network.svg') }}" alt="" aria-hidden="true" class="topic-banner">
 <section aria-labelledby="internet-overview">
   <h2 id="internet-overview">Overview</h2>
   <p>The Internet is a global network that connects computers and devices around the world, allowing them to communicate and exchange information. Its development began in the 1960s and evolved through several important technological milestones into the Internet we use today.</p>
