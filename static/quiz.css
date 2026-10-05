@@ -1,6 +1,10 @@
 /* Quiz: a focused challenge console built from style.css design tokens. */
 
 /* The quiz template has its own main inside the shared page shell. */
+#questionText {
+  white-space: pre-wrap;
+}
+
 body > main:has(> main.container > #quizPanel) {
   padding-top: clamp(var(--space-lg), 4vw, var(--space-2xl));
 }
