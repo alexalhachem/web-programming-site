@@ -90,12 +90,13 @@ function getPerformanceMessage(percentage) {
 function buildCorrection() {
   let correction = "";
   let o;
-  let correctness = "Incorrect";
-  let youranswer = "Not Answered";
+  let correctness;
+  let youranswer;
 
   for(let i = 0; i < questions.length; i++){
+    correctness = "Incorrect";
+    youranswer = "Not Answered";
     o = questions[i];
-    correctness = "";
     if(userAnswers[i] === questions[i].answer) correctness = "Correct";
     if(o.choices[userAnswers[i]] !== undefined) youranswer = `${o.choices[userAnswers[i]]}`;
     correction += `
@@ -103,8 +104,8 @@ function buildCorrection() {
     Your answer: ${youranswer}\n
     Correct answer: ${o.choices[o.answer]}\n
     Result: ${correctness}\n
-    Explanation: ${o.explanation}
-    `
+    Explanation: ${o.explanation}\n
+    `;
   }
 
   return correction;
