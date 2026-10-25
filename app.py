@@ -55,7 +55,7 @@ def home():
         {"week": 4, "title": "Engineering Student Profile", "url": "/submit-profile"},
         {"week": 5, "title": "JavaScript app", "url": "/quiz"},
         {"week": 7, "title": "Live Quiz with Fetch", "url": "/live-quiz"},
-        {"week": 8, "title": "Live Quiz with Fetch", "url": "/profile-validated"},
+        {"week": 8, "title": "Engineering Student Profile (Server side validation)", "url": "/profile-validated"},
     ]
     return render_template("index.html", weekly_work=weekly_work)
 
@@ -116,7 +116,7 @@ def profile_validated():
 
         # all good -> show the profile
         return render_template(
-            "profile_validated.html",
+            "profile.html",
             data=cleaned,
             skills=cleaned.get("skills", []),
             software=cleaned.get("software", [])

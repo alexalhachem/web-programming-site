@@ -1,6 +1,9 @@
 {% extends "base.html" %} 
 {% block title %}Engineering Student Profile{% endblock %}
-{% block head %}<script src="{{ url_for('static', filename='form.js') }}" defer></script>{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='form_style.css') }}">
+<script src="{{ url_for('static', filename='form.js') }}" defer></script>
+{% endblock %}
 {% block header %}{% endblock %}
 {% block content %}
 <h2>Engineering Student Profile</h2> 
@@ -53,22 +56,26 @@ experience, and Final Year Project preferences.</p>
         <label for="credits">Credits Completed:</label>
         <input type="number" id="credits" name="credits" min="0" max="146" step="1" required>
 
-        <p>Expected Graduation:</p>
+        <fieldset>
+        <legend>Expected Graduation</legend>
         <label for="spring">Spring</label>
         <input type="radio" id="spring" name="graduation" value="spring" required>
         <label for="summer">Summer</label>
         <input type="radio" id="summer" name="graduation" value="summer">
         <label for="fall">Fall</label>
         <input type="radio" id="fall" name="graduation" value="fall">
+        </fieldset>
 
         <label for="graduation_month">Expected Graduation Month & Year:</label>
         <input type="date" id="graduation_month" name="graduation_month" required>
 
-        <p>Have you completed an engineering internship?</p>
+        <fieldset>
+        <legend>Have you completed an engineering internship?</legend>
         <label for="yes">Yes</label>
         <input type="radio" id="yes" name="internship_completed" value="yes" required>
         <label for="no">No</label>
         <input type="radio" id="no" name="internship_completed" value="no">
+        </fieldset>
     </fieldset>
 
 
