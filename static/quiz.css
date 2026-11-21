@@ -5,16 +5,18 @@
   white-space: pre-wrap;
 }
 
-body > main:has(> main.container > #quizPanel) {
+body > main:has(> .container > #quizPanel) {
   padding-top: clamp(var(--space-lg), 4vw, var(--space-2xl));
 }
 
-main.container:has(> #quizPanel) {
+.container:has(> #quizPanel) {
   padding: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   color-scheme: dark;
 }
 
-main.container:has(> #quizPanel) > h1 {
+.container:has(> #quizPanel) > h1 {
   position: relative;
   margin: 0 0 var(--space-xl);
   padding-left: var(--space-lg);
@@ -28,7 +30,7 @@ main.container:has(> #quizPanel) > h1 {
   animation: reveal-content var(--motion-duration) var(--motion-ease) backwards;
 }
 
-main.container:has(> #quizPanel) > h1::before {
+.container:has(> #quizPanel) > h1::before {
   content: "";
   position: absolute;
   inset: 0.12em auto 0.08em 0;
@@ -81,6 +83,33 @@ main.container:has(> #quizPanel) > h1::before {
   background-size: 24px 24px;
   mask-image: linear-gradient(225deg, var(--bg), transparent 75%);
   pointer-events: none;
+}
+
+/* Loading and error states for the live quiz data. */
+#loading,
+#error {
+  margin: 0 0 var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+#loading {
+  color: var(--accent-cyan);
+  background: var(--accent-cyan-light);
+  border-color: var(--border-focus);
+}
+
+#error {
+  color: var(--accent-rose);
+  background: rgba(251, 113, 133, 0.12);
+  border-color: var(--accent-rose);
+}
+
+#loading[hidden],
+#error[hidden] {
+  display: none;
 }
 
 #progress {
@@ -331,10 +360,10 @@ main.container:has(> #quizPanel) > h1::before {
 
 /* Keep interaction feedback immediate when reduced motion is requested. */
 @media (prefers-reduced-motion: reduce) {
-  main.container:has(> #quizPanel),
-  main.container:has(> #quizPanel) *,
-  main.container:has(> #quizPanel) *::before,
-  main.container:has(> #quizPanel) *::after {
+  .container:has(> #quizPanel),
+  .container:has(> #quizPanel) *,
+  .container:has(> #quizPanel) *::before,
+  .container:has(> #quizPanel) *::after {
     animation: none;
     transition: none;
   }
